@@ -1,15 +1,17 @@
-//const { Input } = require("phaser.min");
 //@ts-check
 var game;
 var virtualGamePad;
 var avatar;
 var gameLogic;
 
-// Constants
-const MoveUp = 0;
-const MoveRight = 1;
-const MoveDown = 2;
-const MoveLeft = 3;
+// CONSTANTS
+var MOVEUP = 0;
+var MOVERIGHT = 1;
+var MOVEDOWN = 2;
+var MOVELEFT = 3;
+
+var SPEEDWALK = 100;
+var SPEEDRUN = 200;
 
 window.onload = function(){
     var gameConfig = {
@@ -17,6 +19,12 @@ window.onload = function(){
         width: 1920,
         height: 1080,
         backgroundColor: 0x78BE20,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                debug: true
+            }
+        },
         scene: [bootGame, userInterface, playGame]
     }
     game = new Phaser.Game(gameConfig);

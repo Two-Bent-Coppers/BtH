@@ -46,17 +46,30 @@ class bootGame extends Phaser.Scene{
         return newVirtualGamePad;
     }
 
-    handleMove(forScene, key_Input, key_Bindings, user_Container){
-        console.log("Called from " + forScene);
-        console.log("Keyup: " + key_Input.keyCode);
-        console.log("Virtual Pad Test: " + key_Bindings.DPadLeftBind0.keyCode);
-        console.log("Current Avatar Position: " + user_Container.x);
+    handleMove(key_Input, key_Bindings, user_Container){
+        //console.log("Called from " + forScene);
+        //console.log("Keyup: " + key_Input.keyCode);
+        //console.log("Virtual Pad Test: " + key_Bindings.DPadLeftBind0.keyCode);
+        //console.log("Current Avatar Position: " + user_Container.x);
 
 
         switch (key_Input.keyCode) {
             case key_Bindings.DPadLeftBind0.keyCode:
+            case key_Bindings.DPadLeftBind1.keyCode:
                 console.log('monving left');
-                user_Container.setPosition(user_Container.x - 10, user_Container.y);
+                user_Container.body.setVelocity(-SPEEDWALK,0);
+                break;
+
+            case key_Bindings.DPadRightBind0.keyCode:
+            case key_Bindings.DPadRightBind1.keyCode:
+                console.log('monving right');
+                user_Container.body.setVelocity(SPEEDWALK,0);
+                break;
+
+            case key_Bindings.DPadUpBind0.keyCode:
+            case key_Bindings.DPadUpBind1.keyCode:
+                console.log('monving right');
+                user_Container.body.setVelocity(SPEEDWALK,0);
                 break;
         
             default:
@@ -119,6 +132,7 @@ class playGame extends Phaser.Scene{
         this.load.image('hair1', 'assets/sprites/hair1.png')
     }
     create(){
+        this.f = 0;
         console.log("This is a test scene");
         this.logicScene = this.scene.get('BootGame');
         this.uiCreate = this.scene.get('UserInterface');
@@ -138,10 +152,23 @@ class playGame extends Phaser.Scene{
                 this.add.sprite(0,-129,'hair1')
             ]
             ).setScale(3);
+        this.physics.world.enable(avatar);
+        this.physics.world.setFPS(60);
 
         this.uiCreate.createUI(this);
 
+        this.input.keyboard.on('keydown', function(event){
+            gameLogic.handleMove(event, virtualGamePad, avatar);
+        }, this)
+        this.input.keyboard.on('keyup', function(event){
+            avatar.body.setVelocity(0,0);
+        });
 
+        /*
+        this.input.keyboard.on('keydown', function(event){
+            gameLogic.handleMove(event, virtualGamePad, avatar);
+        }, this);
+        */
 
 
         //add body part sprites
@@ -164,13 +191,19 @@ class playGame extends Phaser.Scene{
         //this.hair.setFlip(true,false);
     }
 
-    update(){
+    update(time, delta){
         //console.log(String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode));
-
-        this.input.keyboard.on('keyup', function(event){
-            gameLogic.handleMove(this,event, virtualGamePad, avatar);
-        });
-
+        /*
+        this.f = delta + this.f;
+        
+        if (this.f > 1000){
+            console.log("Delta: " + this.f);
+            this.f = 0;
+        } else{
+            avatar.body.setVelocity(0,0);
+        }
+        */
+        
 
     }
 
