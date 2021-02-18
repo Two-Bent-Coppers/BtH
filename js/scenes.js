@@ -5,7 +5,9 @@ class bootGame extends Phaser.Scene{
     constructor(){
         super("BootGame");
     }
+
     create(){
+        gameLogic = this;
         console.log("Game is starting.");
         virtualGamePad = this.createVirutalGamepad();
         console.log(String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode));
@@ -43,7 +45,67 @@ class bootGame extends Phaser.Scene{
     
         return newVirtualGamePad;
     }
+
+    handleMove(forScene, key_Input, key_Bindings, user_Container){
+        console.log("Called from " + forScene);
+        console.log("Keyup: " + key_Input.keyCode);
+        console.log("Virtual Pad Test: " + key_Bindings.DPadLeftBind0.keyCode);
+        console.log("Current Avatar Position: " + user_Container.x);
+
+
+        switch (key_Input.keyCode) {
+            case key_Bindings.DPadLeftBind0.keyCode:
+                console.log('monving left');
+                user_Container.setPosition(user_Container.x - 10, user_Container.y);
+                break;
+        
+            default:
+                console.log("key input fail");
+                break;
+        }
+
+    }
   
+}
+
+class userInterface extends Phaser.Scene{
+    constructor(){
+        super("UserInterface");
+    }
+    preload(){
+
+    }
+    create(){
+        this.createUI(this);
+    }
+
+    update(){
+        console.log("UI Update");
+    }
+
+    createUI(forScene){
+        console.log('UI Loading');
+        //user input display
+        forScene.gamePad_Ui = forScene.add.container(80,80,
+            [
+                forScene.textDPadUp = forScene.add.text(0, -50, String.fromCharCode(virtualGamePad.DPadUpBind0.keyCode), {font: '32px Courier', fill: '#0000ff'}),
+                forScene.textDPadDown = forScene.add.text(0, 0, String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode), {font: '32px Courier', fill: '#0000ff'}),
+                forScene.textDPadLeft = forScene.add.text(-50, 0, String.fromCharCode(virtualGamePad.DPadLeftBind0.keyCode), {font: '32px Courier', fill: '#0000ff'}),
+                forScene.textDPadRight = forScene.add.text(50, 0, String.fromCharCode(virtualGamePad.DPadRightBind0.keyCode), {font: '32px Courier', fill: '#0000ff'})
+            ]).setScale(1.5);
+
+            forScene.bodyHeat_UI = forScene.add.container(1500,50,
+            [
+                forScene.textCoreTemp = forScene.add.text(0, 0, 'Core Temp:', {font: '32px Courier', fill: '#0000ff'}),
+                forScene.textSkinTemp = forScene.add.text(0, 50, 'Skin Temp:', {font: '32px Courier', fill: '#0000ff'}),
+                forScene.textSurfaceTemp = forScene.add.text(0, 100, 'Surface Temp:', {font: '32px Courier', fill: '#0000ff'}),
+                forScene.textAirTemp = forScene.add.text(0, 150, 'Air Temp:', {font: '32px Courier', fill: '#0000ff'})
+            ]);
+            forScene.textCoreTemp.setStroke('#fff', 8);
+            forScene.textSkinTemp.setStroke('#fff', 8);
+            forScene.textSurfaceTemp.setStroke('#fff', 8);
+            forScene.textAirTemp.setStroke('#fff', 8);
+    }
 }
 
 class playGame extends Phaser.Scene{
@@ -58,23 +120,28 @@ class playGame extends Phaser.Scene{
     }
     create(){
         console.log("This is a test scene");
+        this.logicScene = this.scene.get('BootGame');
+        this.uiCreate = this.scene.get('UserInterface');
+        //gameLogic.handleMove(this, 0,0);
+        
+
+        
         this.bg = this.add.image(1920/2, 1080/2, 'bg1').setOrigin(0.5, 0.5);
         //this.bg = this.add.image(1920/2, 1080/2, 'bg2').setOrigin(0.5, 0.5);
         this.bg.displayWidth = 1920;
         this.bg.displayHeight = 1080;
 
-        
-
         //set container
-        var avatar = this.add.container(960, 600,
+        avatar = this.add.container(960, 600,
             [
                 this.add.sprite(0,0,'body'),
                 this.add.sprite(0,-129,'hair1')
             ]
             ).setScale(3);
 
-        //user input display
-        this.text = this.add.text(50, 0, String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode), {font: '32px Courier', fill: '#000000'});
+        this.uiCreate.createUI(this);
+
+
 
 
         //add body part sprites
@@ -95,6 +162,16 @@ class playGame extends Phaser.Scene{
 
         //this.body.setFlip(true, false);
         //this.hair.setFlip(true,false);
+    }
+
+    update(){
+        //console.log(String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode));
+
+        this.input.keyboard.on('keyup', function(event){
+            gameLogic.handleMove(this,event, virtualGamePad, avatar);
+        });
+
+
     }
 
 }

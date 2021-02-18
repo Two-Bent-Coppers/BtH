@@ -2,6 +2,8 @@
 //@ts-check
 var game;
 var virtualGamePad;
+var avatar;
+var gameLogic;
 
 // Constants
 const MoveUp = 0;
@@ -15,7 +17,7 @@ window.onload = function(){
         width: 1920,
         height: 1080,
         backgroundColor: 0x78BE20,
-        scene: [bootGame, playGame]
+        scene: [bootGame, userInterface, playGame]
     }
     game = new Phaser.Game(gameConfig);
     window.focus();
