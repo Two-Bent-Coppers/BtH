@@ -2,6 +2,8 @@
 var game;
 var virtualGamePad;
 var avatar;
+var targetPosition = new Phaser.Math.Vector2();
+var moveByMouse = false;
 var gameLogic;
 
 // CONSTANTS

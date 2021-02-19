@@ -56,20 +56,26 @@ class bootGame extends Phaser.Scene{
         switch (key_Input.keyCode) {
             case key_Bindings.DPadLeftBind0.keyCode:
             case key_Bindings.DPadLeftBind1.keyCode:
-                console.log('monving left');
+                console.log('moving left');
                 user_Container.body.setVelocity(-SPEEDWALK,0);
                 break;
 
             case key_Bindings.DPadRightBind0.keyCode:
             case key_Bindings.DPadRightBind1.keyCode:
-                console.log('monving right');
+                console.log('moving right');
                 user_Container.body.setVelocity(SPEEDWALK,0);
                 break;
 
             case key_Bindings.DPadUpBind0.keyCode:
             case key_Bindings.DPadUpBind1.keyCode:
-                console.log('monving right');
-                user_Container.body.setVelocity(SPEEDWALK,0);
+                console.log('moving up');
+                user_Container.body.setVelocity(0,-SPEEDWALK);
+                break;
+
+            case key_Bindings.DPadDownBind0.keyCode:
+            case key_Bindings.DPadDownBind1.keyCode:
+                console.log('moving down');
+                user_Container.body.setVelocity(0,SPEEDWALK);
                 break;
         
             default:
@@ -132,7 +138,7 @@ class playGame extends Phaser.Scene{
         this.load.image('hair1', 'assets/sprites/hair1.png')
     }
     create(){
-        this.f = 0;
+        //targetPosition = new Phaser.Math.Vector2();
         console.log("This is a test scene");
         this.logicScene = this.scene.get('BootGame');
         this.uiCreate = this.scene.get('UserInterface');
@@ -157,12 +163,24 @@ class playGame extends Phaser.Scene{
 
         this.uiCreate.createUI(this);
 
+        //Move by Keyboard input
         this.input.keyboard.on('keydown', function(event){
             gameLogic.handleMove(event, virtualGamePad, avatar);
         }, this)
         this.input.keyboard.on('keyup', function(event){
             avatar.body.setVelocity(0,0);
         });
+
+
+        //Move by Mouse input
+        this.input.on('pointerup', function(pointer){ 
+            console.log('move to click');
+            moveByMouse = true;
+            targetPosition.x = pointer.x;
+            targetPosition.y = pointer.y;
+            this.physics.moveToObject(avatar, targetPosition, SPEEDWALK);
+        }, this);
+    
 
         /*
         this.input.keyboard.on('keydown', function(event){
@@ -191,20 +209,18 @@ class playGame extends Phaser.Scene{
         //this.hair.setFlip(true,false);
     }
 
-    update(time, delta){
-        //console.log(String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode));
-        /*
-        this.f = delta + this.f;
+    update(){
+        if (moveByMouse){
+            var dist = Phaser.Math.Distance.Between(avatar.x, avatar.y, targetPosition.x, targetPosition.y)
         
-        if (this.f > 1000){
-            console.log("Delta: " + this.f);
-            this.f = 0;
-        } else{
-            avatar.body.setVelocity(0,0);
-        }
-        */
-        
+            if (avatar.body.speed > 0){
+                if (dist < 4){
+                    avatar.body.reset(targetPosition.x, targetPosition.y);
+                    moveByMouse = false;
+                }   
+            }
 
+        }
     }
 
 }
