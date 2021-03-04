@@ -7,82 +7,14 @@ class bootGame extends Phaser.Scene{
     }
 
     create(){
-        gameLogic = this;
+        globalBrain.variables.gameLogic = this;
         console.log("Game is starting.");
-        virtualGamePad = this.createVirutalGamepad();
-        console.log(String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode));
-        this.scene.start('PlayGame');
-    }
+        globalBrain.variables.virtualGamePad = createVirutalGamepad(this);
+        console.log(String.fromCharCode(globalBrain.variables.virtualGamePad.DPadDownBind0.keyCode));
+        this.scene.launch('Airplane');
+        this.scene.launch('UserInterface');
 
-    createVirutalGamepad(){
-        var newVirtualGamePad = { 
-            //DPad
-            DPadLeftBind0   : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-            DPadLeftBind1   : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-            DPadRightBind0  : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
-            DPadRightBind1  : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-            DPadUpBind0     : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
-            DPadUpBind1     : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-            DPadDownBind0   : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-            DPadDownBind1   : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-        
-            //Action Buttons
-            Action1Bind0    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
-            Action1Bind1    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE),
-            Action2Bind0    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT),
-            Action2Bind1    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO),
-            Action3Bind0    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL),
-            Action3Bind1    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE),
-            Action4Bind0    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ALT),
-            Action4Bind1    : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR),
-        
-            //Command Buttons
-            StartBind0      : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKTICK),
-            StartBind1      : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.MINUS),
-            SelectBind0     : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TAB),
-            SelectBind1     : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS)    
-        };
-    
-        return newVirtualGamePad;
-    }
-
-    handleMove(key_Input, key_Bindings, user_Container){
-        //console.log("Called from " + forScene);
-        //console.log("Keyup: " + key_Input.keyCode);
-        //console.log("Virtual Pad Test: " + key_Bindings.DPadLeftBind0.keyCode);
-        //console.log("Current Avatar Position: " + user_Container.x);
-
-
-        switch (key_Input.keyCode) {
-            case key_Bindings.DPadLeftBind0.keyCode:
-            case key_Bindings.DPadLeftBind1.keyCode:
-                console.log('moving left');
-                user_Container.body.setVelocity(-SPEEDWALK,0);
-                break;
-
-            case key_Bindings.DPadRightBind0.keyCode:
-            case key_Bindings.DPadRightBind1.keyCode:
-                console.log('moving right');
-                user_Container.body.setVelocity(SPEEDWALK,0);
-                break;
-
-            case key_Bindings.DPadUpBind0.keyCode:
-            case key_Bindings.DPadUpBind1.keyCode:
-                console.log('moving up');
-                user_Container.body.setVelocity(0,-SPEEDWALK);
-                break;
-
-            case key_Bindings.DPadDownBind0.keyCode:
-            case key_Bindings.DPadDownBind1.keyCode:
-                console.log('moving down');
-                user_Container.body.setVelocity(0,SPEEDWALK);
-                break;
-        
-            default:
-                console.log("key input fail");
-                break;
-        }
-
+        //this.scene.bringToTop('UserInterface');
     }
   
 }
@@ -95,35 +27,8 @@ class userInterface extends Phaser.Scene{
 
     }
     create(){
-        this.createUI(this);
-    }
-
-    update(){
-        console.log("UI Update");
-    }
-
-    createUI(forScene){
-        console.log('UI Loading');
-        //user input display
-        forScene.gamePad_Ui = forScene.add.container(80,80,
-            [
-                forScene.textDPadUp = forScene.add.text(0, -50, String.fromCharCode(virtualGamePad.DPadUpBind0.keyCode), {font: '32px Courier', fill: '#0000ff'}),
-                forScene.textDPadDown = forScene.add.text(0, 0, String.fromCharCode(virtualGamePad.DPadDownBind0.keyCode), {font: '32px Courier', fill: '#0000ff'}),
-                forScene.textDPadLeft = forScene.add.text(-50, 0, String.fromCharCode(virtualGamePad.DPadLeftBind0.keyCode), {font: '32px Courier', fill: '#0000ff'}),
-                forScene.textDPadRight = forScene.add.text(50, 0, String.fromCharCode(virtualGamePad.DPadRightBind0.keyCode), {font: '32px Courier', fill: '#0000ff'})
-            ]).setScale(1.5);
-
-            forScene.bodyHeat_UI = forScene.add.container(1500,50,
-            [
-                forScene.textCoreTemp = forScene.add.text(0, 0, 'Core Temp:', {font: '32px Courier', fill: '#0000ff'}),
-                forScene.textSkinTemp = forScene.add.text(0, 50, 'Skin Temp:', {font: '32px Courier', fill: '#0000ff'}),
-                forScene.textSurfaceTemp = forScene.add.text(0, 100, 'Surface Temp:', {font: '32px Courier', fill: '#0000ff'}),
-                forScene.textAirTemp = forScene.add.text(0, 150, 'Air Temp:', {font: '32px Courier', fill: '#0000ff'})
-            ]);
-            forScene.textCoreTemp.setStroke('#fff', 8);
-            forScene.textSkinTemp.setStroke('#fff', 8);
-            forScene.textSurfaceTemp.setStroke('#fff', 8);
-            forScene.textAirTemp.setStroke('#fff', 8);
+        this.scene.bringToTop('UserInterface');
+        createUI(this);
     }
 }
 
@@ -132,95 +37,242 @@ class playGame extends Phaser.Scene{
         super("PlayGame");
     }
     preload(){
-        this.load.image('bg1', 'assets/backgrounds/dbg1.jpg');
-        this.load.image('bg2', 'assets/backgrounds/dbg2.jpg');
-        this.load.image('body', 'assets/sprites/fa_73_300.png')
-        this.load.image('hair1', 'assets/sprites/hair1.png')
+        this.load.image('desertBg1', 'assets/backgrounds/dbg1.jpg');
+        loadUserAvatar(this);
     }
     create(){
-        //targetPosition = new Phaser.Math.Vector2();
-        console.log("This is a test scene");
-        this.logicScene = this.scene.get('BootGame');
-        this.uiCreate = this.scene.get('UserInterface');
-        //gameLogic.handleMove(this, 0,0);
+        console.log(this.scene.key);
         
-
-        
-        this.bg = this.add.image(1920/2, 1080/2, 'bg1').setOrigin(0.5, 0.5);
+        this.bg = this.add.image(1920/2, 1080/2, 'desertBg1').setOrigin(0.5, 0.5);
         //this.bg = this.add.image(1920/2, 1080/2, 'bg2').setOrigin(0.5, 0.5);
         this.bg.displayWidth = 1920;
         this.bg.displayHeight = 1080;
+        console.log(this.textures.getPixel(200, 200, 'desertBg1'));
+        console.log(this.textures.get('desertBg1').getSourceImage(0).height);
+        console.log(this.physics.world.bounds);
+
+        //To Left Scene
+        this.arrows = this.add.sprite(50, 1080-200, 'arrows', 'up.png');
+        this.arrows.setScale(3,3);
+        this.mouse1ui = this.add.image(50, 1080-100, 'mouse1click');
+        this.mouse1ui.setScale(2,2);
+        this.leftSceneText = this.add.text(100, 1080-100, 'Desert 2', {font: '48px Courier'});
+        this.leftSceneText.setFill('#0000ff');
+        this.leftSceneText.setStroke('#fff', 4);
+
+        //To Right Scene
+        this.arrows2 = this.add.sprite(1920-50, 1080-200, 'arrows', 'up.png');
+        this.arrows2.setScale(3,3);
+        this.mouse1ui2 = this.add.image(1920-50, 1080-100, 'mouse1click');
+        this.mouse1ui2.setScale(2,2);
+        this.rightSceneText = this.add.text(1920-100, 1080-100, 'To Airport', {font: '48px Courier', align: 'right'});
+        this.rightSceneText.setFill('#0000ff');
+        this.rightSceneText.setStroke('#fff', 4);
+        this.rightSceneText.x = (1920-100) - this.rightSceneText.width;
 
         //set container
-        avatar = this.add.container(960, 600,
-            [
-                this.add.sprite(0,0,'body'),
-                this.add.sprite(0,-129,'hair1')
-            ]
-            ).setScale(3);
-        this.physics.world.enable(avatar);
+        globalBrain.variables.avatar = createUserAvatar(this);
+        this.physics.world.enable(globalBrain.variables.avatar);
         this.physics.world.setFPS(60);
-
-        this.uiCreate.createUI(this);
-
-        //Move by Keyboard input
-        this.input.keyboard.on('keydown', function(event){
-            gameLogic.handleMove(event, virtualGamePad, avatar);
-        }, this)
-        this.input.keyboard.on('keyup', function(event){
-            avatar.body.setVelocity(0,0);
-        });
-
-
-        //Move by Mouse input
-        this.input.on('pointerup', function(pointer){ 
-            console.log('move to click');
-            moveByMouse = true;
-            targetPosition.x = pointer.x;
-            targetPosition.y = pointer.y;
-            this.physics.moveToObject(avatar, targetPosition, SPEEDWALK);
-        }, this);
-    
-
-        /*
-        this.input.keyboard.on('keydown', function(event){
-            gameLogic.handleMove(event, virtualGamePad, avatar);
-        }, this);
-        */
-
-
-        //add body part sprites
-        //this.body = this.add.sprite(1920/2, 1080-(150*3), 'body');
-        //this.hair = this.add.sprite(1920/2, 1080-(150*3)-129, 'hair1');
- 
-        //add body to container
-        //avatar.add(body);
-        //avatar.add(hair);
-
-        //avatar = 
-
-        //this.body = this.add.image(1920/2, 1080-(150*3), 'avatar');
-        //this.body.scale = 3;
-
-        //this.hair = this.add.image(1920/2, 1080-(150*3)-387, 'hair1');
-        //this.hair.scale = 3;
-
-        //this.body.setFlip(true, false);
-        //this.hair.setFlip(true,false);
+        
+        playerMovement(this);
     }
 
     update(){
-        if (moveByMouse){
-            var dist = Phaser.Math.Distance.Between(avatar.x, avatar.y, targetPosition.x, targetPosition.y)
-        
-            if (avatar.body.speed > 0){
-                if (dist < 4){
-                    avatar.body.reset(targetPosition.x, targetPosition.y);
-                    moveByMouse = false;
-                }   
-            }
-
-        }
+        playerClickMoveCheck();
+        changeSceneByEdge(this, "AirportBaggage", 'right', 100, 1920);
+        changeSceneByEdge(this, "Desert2", 'left', 100, 1920);
     }
 
+}
+
+class airplane extends Phaser.Scene{
+    constructor(){
+        super("Airplane");
+    }
+    preload(){
+        this.load.image('airplane', 'assets/backgrounds/airplaneInside1.png');
+        this.load.multiatlas('arrows', 'assets/sprites/arrows/arrows.json', 'assets/sprites/arrows');
+        this.load.image('mouse1click', 'assets/sprites/mouse1click.png');
+        loadUserAvatar(this);
+    }
+    create(){
+        console.log(this.scene.key);
+        this.bg = this.add.image(1920/2, 1080/2, 'airplane').setOrigin(0.5, 0.5);
+
+        //To Left Scene
+        this.arrows = this.add.sprite(50, 1080-200, 'arrows', 'up.png');
+        this.arrows.setScale(3,3);
+        this.mouse1ui = this.add.image(50, 1080-100, 'mouse1click');
+        this.mouse1ui.setScale(2,2);
+        this.leftSceneText = this.add.text(100, 1080-100, 'To Baggage Claim', {font: '48px Courier'});
+        this.leftSceneText.setFill('#0000ff');
+        this.leftSceneText.setStroke('#000', 4);
+
+        //set container
+        globalBrain.variables.avatar = createUserAvatar(this);
+        this.physics.world.enable(globalBrain.variables.avatar);
+        this.physics.world.setFPS(60);  
+        playerMovement(this);
+
+
+        
+    }
+    update(){
+        playerClickMoveCheck();
+        changeSceneByEdge(this, "AirportBaggage", 'left', 100,1920);
+    }
+}
+
+class airportTerminal extends Phaser.Scene{
+    constructor(){
+        super("AirportTerminal");
+    }
+    preload(){
+
+    }
+    create(){
+    
+    }
+}
+
+class airportBaggage extends Phaser.Scene{
+    constructor(){
+        super("AirportBaggage");
+    }
+    preload(){
+        this.load.image('baggageClaim', 'assets/backgrounds/baggageClaim1.png');
+        loadUserAvatar(this);
+    }
+    create(){
+        console.log(this.scene.key);
+        this.bg = this.add.image(3840/2,1080/2,'baggageClaim').setOrigin(0.5, 0.5);
+        this.physics.world.setBounds(0,0,3840,1080);
+        
+        //set container
+        globalBrain.variables.avatar = createUserAvatar(this);
+        this.physics.world.enable(globalBrain.variables.avatar);
+        globalBrain.variables.avatar.body.reset(3840/2, 1080/2);
+        this.physics.world.setFPS(60);
+        this.cameras.main.setBounds(0, 0, this.bg.displayWidth, this.bg.displayHeight);
+        this.cameras.main.startFollow(globalBrain.variables.avatar, true, 0.05, 0.05);
+
+        //Scrolling guides
+        this.arrows3 = this.add.sprite(100,1080-100,'arrows','left.png')
+        this.arrows3.setScale(3,3);
+        this.arrows3.setScrollFactor(0,0);
+        this.arrows4 = this.add.sprite(1920-100,1080-100,'arrows','right.png')
+        this.arrows4.setScale(3,3);
+        this.arrows4.setScrollFactor(0,0);
+        this.mouse1ui3 = this.add.image(1920/2, 1080-100, 'mouse1click');
+        this.mouse1ui3.setScale(2,2);
+        this.mouse1ui3.setScrollFactor(0,0);
+
+        //To Left Scene
+        this.arrows = this.add.sprite(50, 1080-200, 'arrows', 'up.png');
+        this.arrows.setScale(3,3);
+        this.mouse1ui = this.add.image(50, 1080-100, 'mouse1click');
+        this.mouse1ui.setScale(2,2);
+        this.leftSceneText = this.add.text(100, 1080-100, 'Desert 1', {font: '48px Courier'});
+        this.leftSceneText.setFill('#0000ff');
+        this.leftSceneText.setStroke('#fff', 4);
+
+        //To Right Scene
+        this.arrows2 = this.add.sprite(3840-50, 1080-200, 'arrows', 'up.png');
+        this.arrows2.setScale(3,3);
+        this.mouse1ui2 = this.add.image(3840-50, 1080-100, 'mouse1click');
+        this.mouse1ui2.setScale(2,2);
+        this.rightSceneText = this.add.text(3840-100, 1080-100, 'To Airplane', {font: '48px Courier', align: 'right'});
+        this.rightSceneText.setFill('#0000ff');
+        this.rightSceneText.setStroke('#fff', 4);
+        this.rightSceneText.x = (3840-100) - this.rightSceneText.width;
+        
+    
+        playerMovement(this);
+        
+    }
+
+    update(){
+        playerClickMoveCheck();
+        changeSceneByEdge(this, "Airplane", 'right', 100, 3840);
+        changeSceneByEdge(this, "PlayGame", 'left', 100, 3840);
+    }
+}
+
+class airportPickup extends Phaser.Scene{
+    constructor(){
+        super("AirportPickup");
+    }
+    preload(){
+
+    }
+    create(){
+    
+    }
+}
+
+class airportPublicTrans extends Phaser.Scene{
+    constructor(){
+        super("AirportPublicTrans");
+    }
+    preload(){
+
+    }
+    create(){
+    
+    }
+}
+
+class desert2 extends Phaser.Scene{
+    constructor(){
+        super("Desert2");
+    }
+    preload(){
+        this.load.image('desertBg2', 'assets/backgrounds/dbg2.jpg');
+        loadUserAvatar(this);
+    }
+    create(){
+        console.log(this.scene.key);
+        
+        this.bg = this.add.image(1920/2, 1080/2, 'desertBg2').setOrigin(0.5, 0.5);
+        //this.bg = this.add.image(1920/2, 1080/2, 'bg2').setOrigin(0.5, 0.5);
+        this.bg.displayWidth = 1920;
+        this.bg.displayHeight = 1080;
+        console.log(this.textures.getPixel(200, 200, 'desertBg2'));
+        console.log(this.textures.get('desertBg2').getSourceImage(0).height);
+        console.log(this.physics.world.bounds);
+
+        //To Left Scene
+        this.arrows = this.add.sprite(50, 1080-200, 'arrows', 'up.png');
+        this.arrows.setScale(3,3);
+        this.mouse1ui = this.add.image(50, 1080-100, 'mouse1click');
+        this.mouse1ui.setScale(2,2);
+        this.leftSceneText = this.add.text(100, 1080-100, 'Desert 1', {font: '48px Courier'});
+        this.leftSceneText.setFill('#0000ff');
+        this.leftSceneText.setStroke('#fff', 4);
+        
+        /*
+        //To Right Scene
+        this.arrows2 = this.add.sprite(1920-50, 1080-200, 'arrows', 'up.png');
+        this.arrows2.setScale(3,3);
+        this.mouse1ui2 = this.add.image(1920-50, 1080-100, 'mouse1click');
+        this.mouse1ui2.setScale(2,2);
+        this.rightSceneText = this.add.text(1920-100, 1080-100, 'To Desert3', {font: '48px Courier', align: 'right'});
+        this.rightSceneText.setFill('#0000ff');
+        this.rightSceneText.setStroke('#fff', 4);
+        this.rightSceneText.x = (1920-100) - this.rightSceneText.width;*/
+
+        //set container
+        globalBrain.variables.avatar = createUserAvatar(this);
+        this.physics.world.enable(globalBrain.variables.avatar);
+        this.physics.world.setFPS(60);
+        
+        playerMovement(this);
+    }
+
+    update(){
+        playerClickMoveCheck();
+        //changeSceneByEdge(this, "Desert3", 'right', 100, 1920);
+        changeSceneByEdge(this, "PlayGame", 'left', 100, 1920);
+    }
 }

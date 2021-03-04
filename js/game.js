@@ -1,38 +1,25 @@
 //@ts-check
+'use strict';
 var game;
-var virtualGamePad;
-var avatar;
-var targetPosition = new Phaser.Math.Vector2();
-var moveByMouse = false;
-var gameLogic;
-
-// CONSTANTS
-var MOVEUP = 0;
-var MOVERIGHT = 1;
-var MOVEDOWN = 2;
-var MOVELEFT = 3;
-
-var SPEEDWALK = 100;
-var SPEEDRUN = 200;
 
 window.onload = function(){
     var gameConfig = {
         type: Phaser.AUTO,
         width: 1920,
         height: 1080,
-        backgroundColor: 0x78BE20,
+        backgroundColor: 0x000000, //0x78BE20
         physics: {
             default: 'arcade',
             arcade: {
                 debug: true
             }
         },
-        scene: [bootGame, userInterface, playGame]
+        scene: [bootGame, userInterface, playGame, airplane, airportBaggage, desert2]
     }
     game = new Phaser.Game(gameConfig);
     window.focus();
     resizeGame();
-    window.addEventListener("resize",resizeGame);
+    window.addEventListener("resize", resizeGame);
 }
 
 function resizeGame(){

@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5"
-    }
+        //maximium compatibility with older school machines, Phaser 3 is based in ES5. ES5 suppors browsers from 2012/2013.
+        "target": "es5",
+
+        "module": "commonjs", 
+        
+    },
+    "exclude": ["node_modules"]
 }
